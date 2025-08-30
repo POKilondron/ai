@@ -50,7 +50,23 @@ for message in st.session_state.messages[1:]:  # Пропускаем систе
     """
 
     st.title("🤖 ПОК.Бот: ИР с сарказмом")
-    st.markdown("<style>body {background-color: #f5f5f5;} .stChatInput, .stChatMessage {max-width: 700px; margin: auto;} .stChatMessage {border-radius: 12px; background: #fff; box-shadow: 0 2px 8px #eee; padding: 10px; margin-bottom: 10px;} </style>", unsafe_allow_html=True)
+    st.markdown("""
+        <style>
+        body {background: linear-gradient(90deg, #f5f5f5 60%, #e3f2fd 100%);}
+        .chat-container {max-width: 700px; margin: 30px auto;}
+        .chat-bubble-user {
+            background: #1976d2; color: #fff; border-radius: 16px 16px 0 16px;
+            padding: 10px 16px; margin-bottom: 8px; text-align: right;
+            box-shadow: 0 2px 8px #bdbdbd;
+        }
+        .chat-bubble-bot {
+            background: #fff; color: #333; border-radius: 16px 16px 16px 0;
+            padding: 10px 16px; margin-bottom: 8px; text-align: left;
+            box-shadow: 0 2px 8px #bdbdbd;
+        }
+        .chat-title {text-align:center; font-size:2rem; margin-bottom:20px;}
+        </style>
+    """, unsafe_allow_html=True)
 
     # История чата (чтобы ИР помнил контекст)
     if "messages" not in st.session_state:
@@ -59,14 +75,16 @@ for message in st.session_state.messages[1:]:  # Пропускаем систе
         ]
 
     # Интерфейс чата
+    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
     for message in st.session_state.messages[1:]:  # Пропускаем системный промт
         if message["role"] == "user":
-            st.markdown(f"<div style='text-align:right; color:#1976d2;'><b>Вы:</b> {message['content']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='chat-bubble-user'><b>Вы:</b> {message['content']}</div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div style='text-align:left; color:#333;'><b>ПОК.Бот:</b> {message['content']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='chat-bubble-bot'><b>ПОК.Бот:</b> {message['content']}</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    prompt = st.text_input("Введите сообщение и нажмите Enter:", "", key="chat_input")
-    if st.button("Отправить") and prompt:
+    prompt = st.text_input("Введите сообщение и нажмите Enter:", "", key="chat_input", help="Напишите свой вопрос или реплику и нажмите Enter")
+    if st.button("Отправить", help="Отправить сообщение") and prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
         # Формируем промт для модели
         if len(st.session_state.messages) <= 2:
